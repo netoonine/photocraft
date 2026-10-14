@@ -26,6 +26,7 @@ pub const FILL: &str = "edit.generativeFill";
 pub const SET_KEY: &str = "ai.setApiKey";
 pub const CLEAR_KEY: &str = "ai.clearApiKey";
 pub const STATUS: &str = "ai.status";
+pub const MODELS: &str = "ai.models";
 
 /// The model used when `model` is not given.
 pub const DEFAULT_MODEL: &str = "nano-banana-2";
@@ -35,23 +36,9 @@ pub const RESOLUTIONS: [&str; 3] = ["1K", "2K", "4K"];
 const FILL_CONTEXT: f64 = 0.15;
 const MAX_PROMPT: usize = 5000;
 
-/// Aspect ratios Nano Banana 2 accepts, with their width / height.
-const RATIOS: [(&str, f64); 14] = [
-    ("1:1", 1.0),
-    ("2:3", 2.0 / 3.0),
-    ("3:2", 1.5),
-    ("3:4", 0.75),
-    ("4:3", 4.0 / 3.0),
-    ("4:5", 0.8),
-    ("5:4", 1.25),
-    ("9:16", 9.0 / 16.0),
-    ("16:9", 16.0 / 9.0),
-    ("21:9", 21.0 / 9.0),
-    ("1:4", 0.25),
-    ("4:1", 4.0),
-    ("1:8", 0.125),
-    ("8:1", 8.0),
-];
+/// Longest side of an image sent to the model: plenty for every model (their outputs top out at
+/// 4K) and keeps uploads small on a slow connection.
+const MAX_REFERENCE_SIDE: u32 = 2048;
 
 static NETWORK_DISABLED: AtomicBool = AtomicBool::new(false);
 
@@ -67,15 +54,6 @@ fn network_disabled() -> bool {
 
 fn ensure_network() -> Result<()> {
     if network_disabled() { Err(EngineError::Other("AI features are disabled in this process".into())) } else { Ok(()) }
-}
-
-/// The supported ratio closest to `w`×`h` (in log space, so 2:1 and 1:2 are equally far from 1:1).
-pub fn nearest_ratio(w: u32, h: u32) -> &'static str {
-    if w == 0 || h == 0 {
-        return "1:1";
-    }
-    let want = (w as f64 / h as f64).ln();
-    RATIOS.iter().min_by(|a, b| (a.1.ln() - want).abs().total_cmp(&(b.1.ln() - want).abs())).map_or("1:1", |r| r.0)
 }
 
 /// Parameters shared by both commands.
@@ -108,7 +86,7 @@ fn options(p: &Value, cmd: &str) -> Result<Options> {
     };
     let aspect = match p.get("aspectRatio") {
         None | Some(Value::Null) => None,
-        Some(Value::String(a)) if a == "auto" || RATIOS.iter().any(|r| r.0 == a) => Some(a.clone()),
+        Some(Value::String(a)) if a == "auto" || a.split_once(':').is_some_and(|(w, h)| w.parse::<u16>().is_ok_and(|w| w > 0) && h.parse::<u16>().is_ok_and(|h| h > 0)) => Some(a.clone()),
         Some(_) => return Err(bad("\"aspectRatio\" must be \"auto\" or a ratio such as \"16:9\"".into())),
     };
     Ok(Options { prompt, model, resolution, aspect })
@@ -124,15 +102,25 @@ fn layer_name(prefix: &str, prompt: &str) -> String {
     format!("{prefix}: {short}")
 }
 
-/// The composite of `r` (white where transparent) as PNG bytes, for the model to look at.
+/// The composite of `r` (white where transparent) as PNG bytes, for the model to look at,
+/// scaled down to [`MAX_REFERENCE_SIDE`].
 fn png_of_region(doc: &Document, r: Rect) -> Result<Vec<u8>> {
     if r.is_empty() {
         return Err(EngineError::Other("the area is empty".into()));
     }
     let comp = photocraft_compose::composite_to_surface(doc, r, doc.pixel_format(), Some([1.0, 1.0, 1.0]));
-    let mut tmp = Document::new("region", Size::new(r.width(), r.height()), doc.mode, doc.depth);
+    let mut px = translate_surface(&comp, -r.x0, -r.y0);
+    let (mut w, mut h) = (r.width(), r.height());
+    let long = w.max(h);
+    if long > MAX_REFERENCE_SIDE {
+        let k = MAX_REFERENCE_SIDE as f64 / long as f64;
+        px = resize_surface(&px, k, k, Resample::Bicubic);
+        w = ((w as f64 * k).round() as u32).max(1);
+        h = ((h as f64 * k).round() as u32).max(1);
+    }
+    let mut tmp = Document::new("region", Size::new(w, h), doc.mode, doc.depth);
     tmp.icc_profile = doc.icc_profile.clone();
-    tmp.layers.push(Layer::new("region", LayerContent::Raster(translate_surface(&comp, -r.x0, -r.y0))));
+    tmp.layers.push(Layer::new("region", LayerContent::Raster(px)));
     let out = photocraft_io::export(&tmp, "png", &photocraft_io::ExportOptions::default()).map_err(|e| EngineError::Other(format!("could not encode the image for the AI: {e}")))?;
     Ok(out.bytes)
 }
@@ -206,12 +194,13 @@ type AiRequest = craft_ai::ImageRequest;
 struct AiRequest;
 
 #[cfg(not(target_arch = "wasm32"))]
-fn ai_request(o: Options, images: Vec<Vec<u8>>, aspect: String) -> AiRequest {
-    craft_ai::ImageRequest { model: o.model, prompt: o.prompt, images, aspect_ratio: aspect, resolution: o.resolution, extra: Default::default() }
+fn ai_request(o: Options, images: Vec<Vec<u8>>, target: (u32, u32)) -> AiRequest {
+    // An explicit `aspectRatio` wins; otherwise each model picks its closest ratio to `target`.
+    craft_ai::ImageRequest { model: o.model, prompt: o.prompt, images, aspect_ratio: o.aspect.unwrap_or_default(), target: Some(target), resolution: o.resolution, extra: Default::default() }
 }
 
 #[cfg(target_arch = "wasm32")]
-fn ai_request(_: Options, _: Vec<Vec<u8>>, _: String) -> AiRequest {
+fn ai_request(_: Options, _: Vec<Vec<u8>>, _: (u32, u32)) -> AiRequest {
     AiRequest
 }
 
@@ -230,11 +219,10 @@ fn run_generate(s: &mut Session, p: &Value) -> Result<Value> {
     let use_canvas = p.get("useCanvas").and_then(Value::as_bool).unwrap_or(false);
     let d = s.active().ok_or(EngineError::NoDocument)?;
     let canvas = d.doc.bounds();
-    let aspect = o.aspect.clone().unwrap_or_else(|| nearest_ratio(canvas.width(), canvas.height()).to_string());
     let images = if use_canvas { vec![png_of_region(&d.doc, canvas)?] } else { Vec::new() };
     ensure_network()?;
     let name = layer_name("Generated", &o.prompt);
-    let req = ai_request(o, images, aspect);
+    let req = ai_request(o, images, (canvas.width(), canvas.height()));
     crate::jobs::run(s, "Generate Image", true, move |ctx| request(req, ctx), move |s, bytes| insert_generated(s, "Generate Image", &name, &bytes, canvas, Fit::Cover, None))
 }
 
@@ -261,14 +249,13 @@ fn run_fill(s: &mut Session, p: &Value) -> Result<Value> {
     let mask = crate::commands::selection_mask(&d.doc)?.map(|m| LayerMask { feather, ..m });
     ensure_network()?;
     let name = layer_name("Generative Fill", &o.prompt);
-    let aspect = nearest_ratio(region.width(), region.height()).to_string();
     let mut o = o;
     if context {
         // The model edits the whole crop; the mask keeps only the selected part, so ask it to
         // leave the framing alone or the edit would not line up with the photo around it.
         o.prompt = format!("{}\n\nEdit this image as asked. Keep the framing, perspective, scale and lighting identical so the result lines up with the original.", o.prompt);
     }
-    let req = ai_request(o, images, aspect);
+    let req = ai_request(o, images, (region.width(), region.height()));
     crate::jobs::run(s, "Generative Fill", true, move |ctx| request(req, ctx), move |s, bytes| insert_generated(s, "Generative Fill", &name, &bytes, region, Fit::Stretch, mask))
 }
 
@@ -284,6 +271,22 @@ fn key_status() -> Value {
 #[cfg(target_arch = "wasm32")]
 fn key_status() -> Value {
     json!({ "available": false, "hasKey": false, "source": null, "model": DEFAULT_MODEL })
+}
+
+/// The image models the AI commands offer: key (the `model` param), label, whether it can edit
+/// images (Generative Fill with context, Generate Image with the canvas) and generate from a prompt.
+#[cfg(not(target_arch = "wasm32"))]
+fn model_list() -> Vec<Value> {
+    craft_ai::models::IMAGE_MODELS.iter().map(|m| json!({ "key": m.key, "label": m.label, "edit": m.can_edit(), "generate": m.text_to_image.is_some() })).collect()
+}
+
+#[cfg(target_arch = "wasm32")]
+fn model_list() -> Vec<Value> {
+    Vec::new()
+}
+
+fn run_models(_: &mut Session, _: &Value) -> Result<Value> {
+    Ok(json!({ "default": DEFAULT_MODEL, "models": model_list() }))
 }
 
 fn run_status(_: &mut Session, _: &Value) -> Result<Value> {
@@ -326,7 +329,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Generate Image…",
             menu: &["Edit"],
             shortcut: None,
-            params: r##"{"prompt":string,"model":string="nano-banana-2","resolution":"1K"|"2K"|"4K"="1K","aspectRatio":"auto"|"16:9"|…=canvas,"useCanvas":bool=false} → {layer,bounds} (KIE AI; a background job; the image lands as a new pixel layer fitted to the canvas)"##,
+            params: r##"{"prompt":string,"model":string="nano-banana-2" (see ai.models),"resolution":"1K"|"2K"|"4K"="1K","aspectRatio":"auto"|"16:9"|…=closest to the canvas,"useCanvas":bool=false} → {layer,bounds} (KIE AI; a background job; the image lands as a new pixel layer fitted to the canvas)"##,
             enabled: has_doc,
             run: run_generate,
             journal: true,
@@ -336,7 +339,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Generative Fill…",
             menu: &["Edit"],
             shortcut: None,
-            params: r##"{"prompt":string,"context":bool=true,"model":string="nano-banana-2","resolution":"1K"|"2K"|"4K"="1K"} → {layer,bounds} (needs a selection; context: KIE AI edits the selected area plus its surroundings; context false: a new image from the prompt alone, shaped like the selection; a new layer masked by the selection)"##,
+            params: r##"{"prompt":string,"context":bool=true,"model":string="nano-banana-2" (see ai.models),"resolution":"1K"|"2K"|"4K"="1K"} → {layer,bounds} (needs a selection; context: KIE AI edits the selected area plus its surroundings; context false: a new image from the prompt alone, shaped like the selection; a new layer masked by the selection)"##,
             enabled: has_selection,
             run: run_fill,
             journal: true,
@@ -359,6 +362,16 @@ pub fn specs() -> Vec<CommandSpec> {
             params: r##"{"confirm":true} → {hasKey,source}"##,
             enabled: always,
             run: run_clear_key,
+            journal: false,
+        },
+        CommandSpec {
+            id: MODELS,
+            label: "AI Models",
+            menu: &[],
+            shortcut: None,
+            params: r##"{} → {default,models:[{key,label,edit,generate}]} (the image models the AI commands take as "model")"##,
+            enabled: always,
+            run: run_models,
             journal: false,
         },
         CommandSpec {
@@ -400,16 +413,6 @@ mod tests {
     }
 
     #[test]
-    fn nearest_ratio_picks_the_closest_supported_shape() {
-        assert_eq!(nearest_ratio(1000, 1000), "1:1");
-        assert_eq!(nearest_ratio(1920, 1080), "16:9");
-        assert_eq!(nearest_ratio(1080, 1920), "9:16");
-        assert_eq!(nearest_ratio(3000, 2000), "3:2");
-        assert_eq!(nearest_ratio(100, 1000), "1:8");
-        assert_eq!(nearest_ratio(0, 10), "1:1");
-    }
-
-    #[test]
     fn bad_params_are_errors_before_any_request() {
         let mut s = session();
         for p in [
@@ -420,7 +423,8 @@ mod tests {
             json!({"prompt": "x", "resolution": "8K"}),
             json!({"prompt": "x", "resolution": 2}),
             json!({"prompt": "x", "model": "bad model!"}),
-            json!({"prompt": "x", "aspectRatio": "7:3"}),
+            json!({"prompt": "x", "aspectRatio": "wide"}),
+            json!({"prompt": "x", "aspectRatio": "0:3"}),
             json!({"prompt": "x".repeat(MAX_PROMPT + 1)}),
         ] {
             assert!(matches!(s.execute(GENERATE, p.clone()), Err(EngineError::BadParams { .. })), "{p}");
@@ -503,6 +507,27 @@ mod tests {
         assert!(insert_generated(&mut s, "Generate Image", "x", b"not an image", canvas, Fit::Cover, None).is_err());
         assert!(insert_generated(&mut s, "Generate Image", "x", &[], canvas, Fit::Cover, None).is_err());
         assert_eq!(layers(&s), 1);
+    }
+
+    #[test]
+    fn large_references_are_scaled_down_before_upload() {
+        disable_network();
+        let mut s = Session::new();
+        s.execute("file.new", json!({"width": 4000, "height": 1000})).unwrap();
+        let doc = &s.active().unwrap().doc;
+        let img: Image = photocraft_codecs::decode(&png_of_region(doc, doc.bounds()).unwrap()).unwrap();
+        assert_eq!((img.width(), img.height()), (2048, 512));
+    }
+
+    #[test]
+    fn the_model_list_offers_nano_banana_2_first_and_marks_editors() {
+        let mut s = session();
+        let r = s.execute(MODELS, json!({})).unwrap();
+        assert_eq!(r["default"], DEFAULT_MODEL);
+        let models = r["models"].as_array().unwrap();
+        assert_eq!(models[0]["key"], DEFAULT_MODEL);
+        assert!(models.iter().any(|m| m["edit"] == false), "Imagen can't edit");
+        assert!(models.iter().all(|m| m["key"].is_string() && m["label"].is_string()));
     }
 
     #[test]

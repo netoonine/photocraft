@@ -3,7 +3,7 @@
 //! the status bar shows the progress and Esc cancels; the key dialog stores the key in the OS
 //! keychain and never shows it again.
 use crate::{PhotocraftApp, state::DialogKind};
-use photocraft_engine::genai_cmds::{FILL, GENERATE, RESOLUTIONS, SET_KEY, STATUS};
+use photocraft_engine::genai_cmds::{FILL, GENERATE, MODELS, RESOLUTIONS, SET_KEY, STATUS};
 use serde_json::{Map, Value, json};
 
 /// The last AI prompt and its settings, offered again by the next Generate Image / Generative Fill.
@@ -13,6 +13,41 @@ pub struct GenAiLast {
     pub model: String,
     pub resolution: String,
     pub use_canvas: bool,
+    /// Generative Fill dialog: Selection only (the prompt alone) rather than With context.
+    pub area_only: bool,
+}
+
+/// The engine's `ai.models` list (`[{key,label,edit,generate}]`).
+pub fn models(app: &mut PhotocraftApp) -> Vec<Value> {
+    app.session.execute(MODELS, json!({})).ok().and_then(|r| r.get("models").and_then(Value::as_array).cloned()).unwrap_or_default()
+}
+
+/// `(key, label)` of the models that fit: `edit` = the request sends an image (fill with context,
+/// generate from the canvas), else it needs text-to-image. A `current` id the list doesn't know
+/// (typed through automation) is kept at the end so it isn't lost.
+pub fn model_options(models: &[Value], edit: bool, current: &str) -> Vec<(String, String)> {
+    let need = if edit { "edit" } else { "generate" };
+    let mut out: Vec<(String, String)> = models
+        .iter()
+        .filter(|m| m.get(need).and_then(Value::as_bool).unwrap_or(false))
+        .filter_map(|m| Some((m.get("key")?.as_str()?.to_string(), m.get("label")?.as_str()?.to_string())))
+        .collect();
+    let known = models.iter().any(|m| m.get("key").and_then(Value::as_str) == Some(current));
+    if !current.is_empty() && !known {
+        out.push((current.to_string(), current.to_string()));
+    }
+    out
+}
+
+/// `current` if it fits the request, else the first model that does (Nano Banana 2 leads the list).
+pub fn fit_model(options: &[(String, String)], current: &str) -> String {
+    options.iter().find(|(k, _)| k == current).or(options.first()).map_or_else(|| current.to_string(), |(k, _)| k.clone())
+}
+
+/// A model dropdown; returns whether the choice changed.
+pub fn model_dropdown(ui: &mut egui::Ui, id: &str, current: &mut String, options: &[(String, String)], width: f32) -> bool {
+    let opts: Vec<(String, &str)> = options.iter().map(|(k, l)| (k.clone(), l.as_str())).collect();
+    crate::widgets::dropdown(ui, id, current, &opts, width)
 }
 
 const MARK: &str = "__genai";
@@ -53,6 +88,8 @@ pub fn open(app: &mut PhotocraftApp, command: &str) -> Result<Value, String> {
             fields.insert("model".into(), json!(if last.model.is_empty() { status.get("model").and_then(Value::as_str).unwrap_or("nano-banana-2").to_string() } else { last.model }));
             fields.insert("resolution".into(), json!(if last.resolution.is_empty() { "1K".to_string() } else { last.resolution }));
             fields.insert("useCanvas".into(), json!(last.use_canvas));
+            fields.insert("areaOnly".into(), json!(last.area_only));
+            fields.insert("__models".into(), Value::Array(models(app)));
         }
     }
     let id = app.ui.open_dialog(DialogKind::Command, fields);
@@ -87,13 +124,28 @@ pub fn body(ui: &mut egui::Ui, fields: &mut Map<String, Value>) {
     ui.add(egui::TextEdit::multiline(&mut prompt).hint_text(hint).desired_rows(4).desired_width(FIELD_W));
     fields.insert("prompt".into(), json!(prompt));
     ui.add_space(6.0);
-    let mut model = fields.get("model").and_then(Value::as_str).unwrap_or("").to_string();
+    let mut area_only = fields.get("areaOnly").and_then(Value::as_bool).unwrap_or(false);
+    if command == FILL {
+        ui.horizontal(|ui| {
+            ui.selectable_value(&mut area_only, false, tl!("With context"))
+                .on_hover_text(tl!("The AI sees the area around the selection, so the result blends into the image"));
+            ui.selectable_value(&mut area_only, true, tl!("Selection only"))
+                .on_hover_text(tl!("The AI paints from your prompt alone, shaped like the selection"));
+        });
+        fields.insert("areaOnly".into(), json!(area_only));
+        ui.add_space(4.0);
+    }
+    let use_canvas = fields.get("useCanvas").and_then(Value::as_bool).unwrap_or(false);
+    // Sending an image (fill with context, generate from the canvas) needs a model that edits.
+    let sends_image = if command == FILL { !area_only } else { use_canvas };
+    let models: Vec<Value> = fields.get("__models").and_then(Value::as_array).cloned().unwrap_or_default();
+    let model_opts = model_options(&models, sends_image, fields.get("model").and_then(Value::as_str).unwrap_or(""));
+    let mut model = fit_model(&model_opts, fields.get("model").and_then(Value::as_str).unwrap_or(""));
     let mut resolution = fields.get("resolution").and_then(Value::as_str).unwrap_or("1K").to_string();
     let options: Vec<(String, &str)> = RESOLUTIONS.iter().map(|r| (r.to_string(), *r)).collect();
     egui::Grid::new("genai-options").num_columns(2).spacing([12.0, 6.0]).show(ui, |ui| {
         ui.label(tl!("Model"));
-        // Any KIE image model id; nano-banana-2 is the default.
-        ui.add(egui::TextEdit::singleline(&mut model).desired_width(200.0));
+        model_dropdown(ui, "genai-model", &mut model, &model_opts, 200.0);
         ui.end_row();
         ui.label(tl!("Resolution"));
         crate::widgets::dropdown(ui, "genai-resolution", &mut resolution, &options, 200.0);
@@ -123,10 +175,13 @@ pub fn confirm(app: &mut PhotocraftApp, fields: &Map<String, Value>) -> Result<V
     let model = fields.get("model").and_then(Value::as_str).unwrap_or("").trim().to_string();
     let resolution = fields.get("resolution").and_then(Value::as_str).unwrap_or("1K").to_string();
     let use_canvas = fields.get("useCanvas").and_then(Value::as_bool).unwrap_or(false);
-    app.ui.genai_last = GenAiLast { prompt: prompt.clone(), model: model.clone(), resolution: resolution.clone(), use_canvas };
+    let area_only = fields.get("areaOnly").and_then(Value::as_bool).unwrap_or(false);
+    app.ui.genai_last = GenAiLast { prompt: prompt.clone(), model: model.clone(), resolution: resolution.clone(), use_canvas, area_only };
     let mut params = json!({"prompt": prompt, "model": model, "resolution": resolution});
     if command == GENERATE {
         params["useCanvas"] = json!(use_canvas);
+    } else {
+        params["context"] = json!(!area_only);
     }
     app.run_command(command, params)
 }
@@ -145,6 +200,23 @@ mod tests {
     fn invoke(app: &mut PhotocraftApp, id: &str) -> Result<Value, String> {
         let ctx = egui::Context::default();
         crate::menus::invoke(app, &ctx, id, json!({}))
+    }
+
+    #[test]
+    fn the_model_list_fits_the_request() {
+        let mut app = make_app();
+        let all = models(&mut app);
+        assert!(all.len() > 5);
+        let editors = model_options(&all, true, "nano-banana-2");
+        let makers = model_options(&all, false, "nano-banana-2");
+        assert_eq!(editors[0].0, "nano-banana-2");
+        assert!(!editors.iter().any(|(k, _)| k == "imagen-4-ultra"), "Imagen can't edit");
+        assert!(makers.iter().any(|(k, _)| k == "imagen-4-ultra"));
+        // A model that can't do the job falls back to the first that can.
+        assert_eq!(fit_model(&editors, "imagen-4-ultra"), "nano-banana-2");
+        assert_eq!(fit_model(&makers, "seedream-5-pro"), "seedream-5-pro");
+        // A custom id typed through automation is kept.
+        assert!(model_options(&all, false, "some/custom-model").iter().any(|(k, _)| k == "some/custom-model"));
     }
 
     #[test]

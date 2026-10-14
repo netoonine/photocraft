@@ -25,6 +25,8 @@ pub struct ContextBarUi {
     /// Focus the prompt on the next frame (just expanded).
     pub focus: bool,
     pub dismissed: Option<crate::context_bar::SelectionKey>,
+    /// The engine's model list, read once when the bar first expands.
+    pub models: Vec<Value>,
 }
 
 /// Identifies one selection: its document and bounds (a new or changed selection shows the bar
@@ -96,6 +98,12 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
     let t = crate::theme::Tokens::get(ctx);
     let busy = app.session.has_jobs();
     let mut bar = app.ui.context_bar.clone();
+    if bar.expanded && bar.models.is_empty() {
+        bar.models = crate::genai_ui::models(app);
+    }
+    // With context the model gets an image, so only models that edit are offered.
+    let model_opts = crate::genai_ui::model_options(&bar.models, !bar.area_only, &app.ui.genai_last.model);
+    let mut model = crate::genai_ui::fit_model(&model_opts, &app.ui.genai_last.model);
     let mut action = None;
     egui::Area::new(id).order(egui::Order::Foreground).fixed_pos(pos).show(ctx, |ui| {
         egui::Frame::NONE
@@ -117,12 +125,14 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
                     });
                     return;
                 }
-                ui.set_width(380.0);
+                ui.set_width(460.0);
                 ui.horizontal(|ui| {
                     ui.selectable_value(&mut bar.area_only, false, tl!("With context"))
                         .on_hover_text(tl!("The AI sees the area around the selection, so the result blends into the image"));
                     ui.selectable_value(&mut bar.area_only, true, tl!("Selection only"))
                         .on_hover_text(tl!("The AI paints from your prompt alone, shaped like the selection"));
+                    ui.add_space(8.0);
+                    crate::genai_ui::model_dropdown(ui, "context-bar-model", &mut model, &model_opts, 160.0);
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if ui.add(egui::Button::new(egui::RichText::new("×").color(t.text_dim)).frame(false)).on_hover_text(tl!("Close")).clicked() {
                             action = Some(Action::Collapse);
@@ -130,7 +140,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
                     });
                 });
                 ui.horizontal(|ui| {
-                    let edit = ui.add(egui::TextEdit::singleline(&mut bar.prompt).hint_text(tl!("Describe what to generate")).desired_width(280.0));
+                    let edit = ui.add(egui::TextEdit::singleline(&mut bar.prompt).hint_text(tl!("Describe what to generate")).desired_width(360.0));
                     if bar.focus {
                         edit.request_focus();
                         bar.focus = false;
@@ -144,6 +154,10 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
                 });
             });
     });
+    // The chosen model is shared with the Generate Image / Generative Fill dialogs.
+    if !model.is_empty() {
+        app.ui.genai_last.model = model;
+    }
     match action {
         Some(Action::Expand) => {
             bar.expanded = true;
@@ -237,5 +251,7 @@ mod tests {
         h.run_steps(3);
         assert!(h.query_by_label(crate::i18n::t("With context")).is_some());
         assert!(h.query_by_label(crate::i18n::t("Selection only")).is_some());
+        assert!(h.state().ui.context_bar.models.len() > 5, "the model list loads when the bar expands");
+        assert_eq!(h.state().ui.genai_last.model, "nano-banana-2", "Nano Banana 2 is preselected");
     }
 }
