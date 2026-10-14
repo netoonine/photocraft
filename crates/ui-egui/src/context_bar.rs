@@ -1,5 +1,5 @@
-//! Contextual task bar, as in Photoshop: a small floating bar under the active selection (any
-//! selection tool) offering Generate with AI. Two modes, both `edit.generativeFill` as a
+//! Contextual task bar, as in Photoshop: a small floating bar shown while there is a selection
+//! (any selection tool), docked at the bottom centre of the canvas, offering Generate with AI. Two modes, both `edit.generativeFill` as a
 //! background job (status bar progress, Esc cancels):
 //! - With context: the model sees the selection and the area around it, so the result blends
 //!   into the image.
@@ -9,17 +9,29 @@
 //! hides it until the selection changes.
 use crate::PhotocraftApp;
 use crate::canvas::ViewXform;
-use crate::state::ContextBarUi;
 use egui::{Context, pos2, vec2};
 use photocraft_engine::genai_cmds::FILL;
 use photocraft_geom::Rect as DRect;
 use serde_json::{Value, json};
 
+/// The contextual task bar's state: open or not, its prompt and mode, and the selection it was
+/// closed for (it comes back when the selection changes).
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct ContextBarUi {
+    pub expanded: bool,
+    pub prompt: String,
+    /// Selection only (the prompt alone) rather than With context.
+    pub area_only: bool,
+    /// Focus the prompt on the next frame (just expanded).
+    pub focus: bool,
+    pub dismissed: Option<crate::context_bar::SelectionKey>,
+}
+
 /// Identifies one selection: its document and bounds (a new or changed selection shows the bar
 /// again after ×).
 pub type SelectionKey = (u64, [i32; 4]);
 
-/// Gap between the selection and the bar, in points.
+/// Gap between the bar and the bottom of the canvas, in points.
 const GAP: f32 = 10.0;
 
 fn busy_with_gesture(app: &PhotocraftApp) -> bool {
@@ -52,7 +64,7 @@ pub fn target(app: &mut PhotocraftApp) -> Option<(SelectionKey, DRect)> {
 
 /// The `edit.generativeFill` params for the bar's prompt and mode, with the dialog's last model
 /// and resolution.
-pub fn params(bar: &ContextBarUi, last: &crate::state::GenAiLast) -> Value {
+pub fn params(bar: &ContextBarUi, last: &crate::genai_ui::GenAiLast) -> Value {
     let mut p = json!({ "prompt": bar.prompt.trim(), "context": !bar.area_only });
     if !last.model.trim().is_empty() {
         p["model"] = json!(last.model.trim());
@@ -67,27 +79,19 @@ enum Action {
     Expand,
     Collapse,
     Dismiss,
-    Deselect,
     Generate,
 }
 
 /// Draw the bar for the active document's selection (once a frame, after the canvas).
 pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
-    let Some((key, b)) = target(app) else { return };
+    let Some((key, _)) = target(app) else { return };
     let Some(xf) = ViewXform::active(app) else { return };
-    let sel = xf.doc_rect(b);
     let view = xf.rect;
-    if !view.intersects(sel) {
-        return;
-    }
     let id = egui::Id::new("photocraft-context-bar");
     let size = ctx.memory(|m| m.area_rect(id)).map_or(vec2(260.0, 36.0), |r| r.size());
-    let mut pos = pos2(sel.center().x - size.x / 2.0, sel.max.y + GAP);
-    if pos.y + size.y > view.bottom() - 4.0 {
-        pos.y = sel.min.y - GAP - size.y;
-    }
-    pos.x = pos.x.min(view.right() - size.x - 4.0).max(view.left() + 4.0);
-    pos.y = pos.y.min(view.bottom() - size.y - 4.0).max(view.top() + 4.0);
+    // Docked at the bottom centre of the canvas (Photoshop's pinned position), not next to the
+    // selection: right-clicks around the selection must keep reaching the canvas menus.
+    let pos = pos2((view.center().x - size.x / 2.0).max(view.left() + 4.0), (view.bottom() - size.y - GAP).max(view.top() + 4.0));
 
     let t = crate::theme::Tokens::get(ctx);
     let busy = app.session.has_jobs();
@@ -103,12 +107,9 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
             .show(ui, |ui| {
                 if !bar.expanded {
                     ui.horizontal(|ui| {
-                        let label = egui::RichText::new(format!("✦ {}", tl!("Generate with AI"))).color(egui::Color32::WHITE);
+                        let label = egui::RichText::new(tl!("Generate with AI")).color(egui::Color32::WHITE);
                         if ui.add_enabled(!busy, egui::Button::new(label).fill(t.accent)).clicked() {
                             action = Some(Action::Expand);
-                        }
-                        if ui.button(tl!("Deselect")).clicked() {
-                            action = Some(Action::Deselect);
                         }
                         if ui.add(egui::Button::new(egui::RichText::new("×").color(t.text_dim)).frame(false)).on_hover_text(tl!("Close")).clicked() {
                             action = Some(Action::Dismiss);
@@ -153,12 +154,6 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
             bar.dismissed = Some(key);
             bar.expanded = false;
         }
-        Some(Action::Deselect) => {
-            if let Err(e) = app.run("select.deselect", json!({})) {
-                app.ui.status = e;
-                app.ui.status_error = true;
-            }
-        }
         Some(Action::Generate) => {
             let p = params(&bar, &app.ui.genai_last);
             app.ui.genai_last.prompt = bar.prompt.trim().to_string();
@@ -176,7 +171,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::state::GenAiLast;
+    use crate::genai_ui::GenAiLast;
 
     fn make_app() -> PhotocraftApp {
         photocraft_engine::genai_cmds::disable_network();
@@ -218,14 +213,29 @@ mod tests {
         assert!(target(&mut app).is_none());
     }
 
+    /// The whole app, rendered: the bar shows with a selection, not without, and expands.
     #[test]
-    fn showing_the_bar_on_a_selection_does_not_panic() {
-        let mut app = make_app();
-        app.run("select.rect", json!({"x": 4, "y": 4, "width": 20, "height": 10})).unwrap();
-        let ctx = egui::Context::default();
-        for expanded in [false, true] {
-            app.ui.context_bar.expanded = expanded;
-            let _ = ctx.run_ui(Default::default(), |ui| show(&mut app, ui.ctx()));
-        }
+    fn the_bar_appears_on_the_canvas_with_a_selection() {
+        use egui_kittest::{Harness, kittest::Queryable};
+        let build = |selection: bool| {
+            let mut h = Harness::builder().with_size(vec2(1200.0, 800.0)).build_eframe(move |cc| {
+                PhotocraftApp::setup_context(&cc.egui_ctx, Default::default());
+                let mut app = make_app();
+                if selection {
+                    app.run("select.rect", json!({"x": 4, "y": 4, "width": 20, "height": 10})).unwrap();
+                }
+                app
+            });
+            h.run_steps(5);
+            h
+        };
+        let label = crate::i18n::t("Generate with AI").to_string();
+        assert!(build(false).query_by_label(&label).is_none());
+        let mut h = build(true);
+        assert!(h.query_by_label(&label).is_some(), "the bar shows under a selection");
+        h.state_mut().ui.context_bar.expanded = true;
+        h.run_steps(3);
+        assert!(h.query_by_label(crate::i18n::t("With context")).is_some());
+        assert!(h.query_by_label(crate::i18n::t("Selection only")).is_some());
     }
 }

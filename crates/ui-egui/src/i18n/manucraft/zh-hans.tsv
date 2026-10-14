@@ -1,0 +1,21 @@
+# MANUCRAFT translations (zh-hans), merged into ../zh-hans.tsv when parsed (i18n/manucraft/mod.rs).
+# Same columns: context <TAB> English source <TAB> translation.
+	Generative Fill…	创成式填充…
+	Generate Image…	生成图像…
+	AI API Key…	AI API 密钥…
+	KIE API key	KIE API 密钥
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	已保存密钥。输入新密钥可替换，留空则删除。
+	No key yet. Get one at kie.ai.	尚无密钥。请在 kie.ai 获取。
+	The KIE_API_KEY environment variable is set and takes precedence.	已设置环境变量 KIE_API_KEY，它优先生效。
+	No KIE API key yet: set it in Edit › AI API Key…	尚无 KIE API 密钥。设置位置：编辑 › AI API 密钥…
+	Describe what to change in the selection	描述要在选区中更改的内容
+	Describe the image to generate	描述要生成的图像
+	Use the canvas as a reference	使用画布作为参考
+	Uses credits from your KIE AI account.	将消耗您 KIE AI 账户中的点数。
+	Generate with AI	使用 AI 生成
+	With context	包含上下文
+	Selection only	仅选区
+	Describe what to generate	描述要生成的内容
+	The AI sees the area around the selection, so the result blends into the image	AI 会参考选区周围的区域，使结果与图像融为一体
+	The AI paints from your prompt alone, shaped like the selection	AI 仅根据您的提示，按选区形状绘制
+	Contextual Task Bar	上下文任务栏

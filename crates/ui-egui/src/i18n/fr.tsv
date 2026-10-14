@@ -3179,23 +3179,3 @@ curves	Smooth	Lisser
 # View › Guides › right-click a guide
 	Edit Selected Guides	Modifier les repères sélectionnés
 	Clear Selected Guides	Effacer les repères sélectionnés
-# Generative AI through KIE (local addition)
-	Generative Fill…	Remplissage génératif…
-	Generate Image…	Générer une image…
-	AI API Key…	Clé d'API d'IA…
-	KIE API key	Clé d'API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Une clé est enregistrée. Saisissez-en une nouvelle pour la remplacer, ou laissez vide pour la supprimer.
-	No key yet. Get one at kie.ai.	Aucune clé pour l'instant. Obtenez-en une sur kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	La variable d'environnement KIE_API_KEY est définie et a la priorité.
-	No KIE API key yet: set it in Edit › AI API Key…	Aucune clé d'API KIE : définissez-la dans Édition › Clé d'API d'IA…
-	Describe what to change in the selection	Décrivez ce qu'il faut modifier dans la sélection
-	Describe the image to generate	Décrivez l'image à générer
-	Use the canvas as a reference	Utiliser le canevas comme référence
-	Uses credits from your KIE AI account.	Utilise des crédits de votre compte KIE AI.
-	Generate with AI	Générer avec l'IA
-	With context	Avec contexte
-	Selection only	Sélection seule
-	Describe what to generate	Décrivez ce qu'il faut générer
-	The AI sees the area around the selection, so the result blends into the image	L'IA voit la zone autour de la sélection : le résultat se fond dans l'image
-	The AI paints from your prompt alone, shaped like the selection	L'IA peint uniquement d'après votre invite, à la forme de la sélection
-	Contextual Task Bar	Barre des tâches contextuelle

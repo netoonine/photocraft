@@ -3905,23 +3905,3 @@ cameraData	Lens	Lens
 # View › Guides › right-click a guide
 	Edit Selected Guides	Seçili Kılavuzları Düzenle
 	Clear Selected Guides	Seçili Kılavuzları Temizle
-# Generative AI through KIE (local addition)
-	Generative Fill…	Üretken Dolgu…
-	Generate Image…	Görüntü Oluştur…
-	AI API Key…	Yapay Zeka API Anahtarı…
-	KIE API key	KIE API anahtarı
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Kayıtlı bir anahtar var. Değiştirmek için yenisini girin veya kaldırmak için boş bırakın.
-	No key yet. Get one at kie.ai.	Henüz anahtar yok. kie.ai adresinden edinin.
-	The KIE_API_KEY environment variable is set and takes precedence.	KIE_API_KEY ortam değişkeni ayarlı ve önceliklidir.
-	No KIE API key yet: set it in Edit › AI API Key…	Henüz KIE API anahtarı yok. Ayarlamak için: Düzen › Yapay Zeka API Anahtarı…
-	Describe what to change in the selection	Seçimde neyin değişeceğini açıklayın
-	Describe the image to generate	Oluşturulacak görüntüyü açıklayın
-	Use the canvas as a reference	Tuvali referans olarak kullan
-	Uses credits from your KIE AI account.	KIE AI hesabınızdaki kredileri kullanır.
-	Generate with AI	Yapay Zeka ile Oluştur
-	With context	Bağlamla
-	Selection only	Yalnızca seçim
-	Describe what to generate	Ne oluşturulacağını açıklayın
-	The AI sees the area around the selection, so the result blends into the image	Yapay zeka seçimin çevresini görür, böylece sonuç görüntüyle kaynaşır
-	The AI paints from your prompt alone, shaped like the selection	Yapay zeka yalnızca isteminize göre, seçimin biçiminde çizer
-	Contextual Task Bar	Bağlamsal Görev Çubuğu

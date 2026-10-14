@@ -3166,23 +3166,3 @@ curves	Smooth	Haluskan
 # View › Guides › right-click a guide
 	Edit Selected Guides	Edit Panduan Terpilih
 	Clear Selected Guides	Hapus Panduan Terpilih
-# Generative AI through KIE (local addition)
-	Generative Fill…	Isian Generatif…
-	Generate Image…	Buat Gambar…
-	AI API Key…	Kunci API AI…
-	KIE API key	Kunci API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Kunci sudah tersimpan. Masukkan kunci baru untuk menggantinya, atau kosongkan untuk menghapusnya.
-	No key yet. Get one at kie.ai.	Belum ada kunci. Dapatkan di kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Variabel lingkungan KIE_API_KEY telah diatur dan diutamakan.
-	No KIE API key yet: set it in Edit › AI API Key…	Belum ada kunci API KIE: atur di Edit › Kunci API AI…
-	Describe what to change in the selection	Jelaskan apa yang diubah dalam seleksi
-	Describe the image to generate	Jelaskan gambar yang ingin dibuat
-	Use the canvas as a reference	Gunakan kanvas sebagai referensi
-	Uses credits from your KIE AI account.	Menggunakan kredit dari akun KIE AI Anda.
-	Generate with AI	Buat dengan AI
-	With context	Dengan konteks
-	Selection only	Hanya seleksi
-	Describe what to generate	Jelaskan apa yang ingin dibuat
-	The AI sees the area around the selection, so the result blends into the image	AI melihat area di sekitar seleksi, sehingga hasilnya menyatu dengan gambar
-	The AI paints from your prompt alone, shaped like the selection	AI melukis hanya dari prompt Anda, berbentuk seperti seleksi
-	Contextual Task Bar	Bilah Tugas Kontekstual

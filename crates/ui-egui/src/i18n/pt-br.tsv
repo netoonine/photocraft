@@ -3965,23 +3965,3 @@ layerLabel	No Color	Sem cor
 # View › Guides › right-click a guide
 	Edit Selected Guides	Editar guias selecionadas
 	Clear Selected Guides	Limpar guias selecionadas
-# Generative AI through KIE (local addition)
-	Generative Fill…	Preenchimento generativo…
-	Generate Image…	Gerar imagem…
-	AI API Key…	Chave de API de IA…
-	KIE API key	Chave de API da KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Há uma chave salva. Digite uma nova para substituí-la ou deixe em branco para removê-la.
-	No key yet. Get one at kie.ai.	Ainda não há chave. Obtenha uma em kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	A variável de ambiente KIE_API_KEY está definida e tem prioridade.
-	No KIE API key yet: set it in Edit › AI API Key…	Ainda não há chave de API da KIE: defina-a em Editar › Chave de API de IA…
-	Describe what to change in the selection	Descreva o que mudar na seleção
-	Describe the image to generate	Descreva a imagem a gerar
-	Use the canvas as a reference	Usar a tela como referência
-	Uses credits from your KIE AI account.	Usa créditos da sua conta KIE AI.
-	Generate with AI	Gerar com IA
-	With context	Com contexto
-	Selection only	Só a seleção
-	Describe what to generate	Descreva o que gerar
-	The AI sees the area around the selection, so the result blends into the image	A IA vê a área ao redor da seleção, e o resultado se integra à imagem
-	The AI paints from your prompt alone, shaped like the selection	A IA cria só a partir do seu prompt, no formato da seleção
-	Contextual Task Bar	Barra de tarefas contextual

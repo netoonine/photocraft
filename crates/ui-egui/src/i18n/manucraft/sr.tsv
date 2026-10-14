@@ -1,0 +1,21 @@
+# MANUCRAFT translations (sr), merged into ../sr.tsv when parsed (i18n/manucraft/mod.rs).
+# Same columns: context <TAB> English source <TAB> translation.
+	Generative Fill…	Generativna popuna…
+	Generate Image…	Generiši sliku…
+	AI API Key…	API ključ za VI…
+	KIE API key	KIE API ključ
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Ključ je sačuvan. Unesite novi da ga zamenite ili ostavite prazno da ga uklonite.
+	No key yet. Get one at kie.ai.	Još nema ključa. Nabavite ga na kie.ai.
+	The KIE_API_KEY environment variable is set and takes precedence.	Promenljiva okruženja KIE_API_KEY je postavljena i ima prednost.
+	No KIE API key yet: set it in Edit › AI API Key…	Još nema KIE API ključa: postavite ga u Uređivanje › API ključ za VI…
+	Describe what to change in the selection	Opišite šta da se promeni u izboru
+	Describe the image to generate	Opišite sliku koju treba generisati
+	Use the canvas as a reference	Koristi platno kao referencu
+	Uses credits from your KIE AI account.	Troši kredite sa vašeg KIE AI naloga.
+	Generate with AI	Generiši pomoću VI
+	With context	Sa kontekstom
+	Selection only	Samo izbor
+	Describe what to generate	Opišite šta da se generiše
+	The AI sees the area around the selection, so the result blends into the image	VI vidi oblast oko izbora, pa se rezultat uklapa u sliku
+	The AI paints from your prompt alone, shaped like the selection	VI slika samo na osnovu vašeg upita, u obliku izbora
+	Contextual Task Bar	Kontekstualna traka zadataka

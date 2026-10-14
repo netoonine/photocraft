@@ -77,7 +77,7 @@ pub const UI_COMMANDS: &[(&str, &str, &[&str], Option<&str>)] = &[
     ("window.togglePanels", "Show/Hide All Panels", &[], Some("Tab")),
     ("window.toggle.dock", "Show/Hide Panels", &[], Some("Shift+Tab")),
     ("window.toggle.options", "Options", &["Window"], None),
-    ("window.toggle.contextBar", "Contextual Task Bar", &["Window"], None),
+    ("window.toggle.contextBar", "Contextual Task Bar", &["Window"], None), // MANUCRAFT
     // Photoshop's Ctrl+Tab and Ctrl+Shift+Tab, on macOS too (⌘Tab belongs to the system, #2340).
     ("window.nextDocument", "Next Document", &[], Some("Ctrl+Tab")),
     ("window.previousDocument", "Previous Document", &[], Some("Ctrl+Shift+Tab")),
@@ -290,7 +290,7 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
             Ok(Value::Null)
         }
         "layer.duplicate" if params.as_object().is_none_or(|o| o.is_empty()) => crate::duplicate_layer_ui::open(app),
-        g if crate::genai_ui::intercepts(g) && params.as_object().is_none_or(|o| o.is_empty()) => crate::genai_ui::open(app, g),
+        g if crate::genai_ui::intercepts(g) && params.as_object().is_none_or(|o| o.is_empty()) => crate::genai_ui::open(app, g), // MANUCRAFT: AI dialogs
         "file.new" if params.as_object().is_none_or(|o| o.is_empty()) => {
             let fields = app.new_document_fields();
             let d = app.ui.open_dialog(DialogKind::NewDocument, fields);
@@ -683,7 +683,7 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
                 "brushSettings" => &mut p.brush_settings,
                 "brushes" => &mut p.brushes,
                 "dock" => &mut p.dock,
-                "contextBar" => &mut p.context_bar,
+                "contextBar" => &mut p.context_bar, // MANUCRAFT
                 _ => return Err(format!("unknown panel in {t}")),
             };
             *slot = !*slot;
@@ -893,7 +893,7 @@ fn checked(app: &PhotocraftApp, id: &str) -> Option<bool> {
         "window.toggle.options" => p.options_bar,
         "window.toggle.brushSettings" => p.brush_settings,
         "window.toggle.brushes" => p.brushes,
-        "window.toggle.contextBar" => p.context_bar,
+        "window.toggle.contextBar" => p.context_bar, // MANUCRAFT
         _ => return None,
     })
 }

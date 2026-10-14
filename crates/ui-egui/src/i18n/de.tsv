@@ -3177,23 +3177,3 @@ curves	Smooth	Glätten
 # View › Guides › right-click a guide
 	Edit Selected Guides	Ausgewählte Hilfslinien bearbeiten
 	Clear Selected Guides	Ausgewählte Hilfslinien löschen
-# Generative AI through KIE (local addition)
-	Generative Fill…	Generative Füllung…
-	Generate Image…	Bild generieren…
-	AI API Key…	KI-API-Schlüssel…
-	KIE API key	KIE-API-Schlüssel
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Ein Schlüssel ist gespeichert. Geben Sie einen neuen ein, um ihn zu ersetzen, oder lassen Sie das Feld leer, um ihn zu entfernen.
-	No key yet. Get one at kie.ai.	Noch kein Schlüssel. Sie erhalten einen auf kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Die Umgebungsvariable KIE_API_KEY ist gesetzt und hat Vorrang.
-	No KIE API key yet: set it in Edit › AI API Key…	Noch kein KIE-API-Schlüssel. Festlegen unter: Bearbeiten › KI-API-Schlüssel…
-	Describe what to change in the selection	Beschreiben Sie, was in der Auswahl geändert werden soll
-	Describe the image to generate	Beschreiben Sie das zu generierende Bild
-	Use the canvas as a reference	Arbeitsfläche als Referenz verwenden
-	Uses credits from your KIE AI account.	Verbraucht Guthaben Ihres KIE-AI-Kontos.
-	Generate with AI	Mit KI generieren
-	With context	Mit Kontext
-	Selection only	Nur Auswahl
-	Describe what to generate	Beschreiben Sie, was generiert werden soll
-	The AI sees the area around the selection, so the result blends into the image	Die KI sieht den Bereich um die Auswahl, sodass sich das Ergebnis ins Bild einfügt
-	The AI paints from your prompt alone, shaped like the selection	Die KI malt nur nach Ihrem Prompt, in der Form der Auswahl
-	Contextual Task Bar	Kontextbezogene Taskleiste

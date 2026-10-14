@@ -1,0 +1,21 @@
+# MANUCRAFT translations (ru), merged into ../ru.tsv when parsed (i18n/manucraft/mod.rs).
+# Same columns: context <TAB> English source <TAB> translation.
+	Generative Fill…	Генеративная заливка…
+	Generate Image…	Создать изображение…
+	AI API Key…	Ключ API ИИ…
+	KIE API key	Ключ API KIE
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Ключ сохранён. Введите новый, чтобы заменить его, или оставьте поле пустым, чтобы удалить.
+	No key yet. Get one at kie.ai.	Ключа пока нет. Получите его на kie.ai.
+	The KIE_API_KEY environment variable is set and takes precedence.	Задана переменная среды KIE_API_KEY, она имеет приоритет.
+	No KIE API key yet: set it in Edit › AI API Key…	Ключ API KIE не задан: укажите его в меню Редактирование › Ключ API ИИ…
+	Describe what to change in the selection	Опишите, что изменить в выделении
+	Describe the image to generate	Опишите изображение, которое нужно создать
+	Use the canvas as a reference	Использовать холст как образец
+	Uses credits from your KIE AI account.	Расходует кредиты вашего аккаунта KIE AI.
+	Generate with AI	Создать с помощью ИИ
+	With context	С контекстом
+	Selection only	Только выделение
+	Describe what to generate	Опишите, что создать
+	The AI sees the area around the selection, so the result blends into the image	ИИ видит область вокруг выделения, поэтому результат вписывается в изображение
+	The AI paints from your prompt alone, shaped like the selection	ИИ рисует только по вашему запросу, в форме выделения
+	Contextual Task Bar	Контекстная панель задач

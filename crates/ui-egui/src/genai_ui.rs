@@ -6,6 +6,15 @@ use crate::{PhotocraftApp, state::DialogKind};
 use photocraft_engine::genai_cmds::{FILL, GENERATE, RESOLUTIONS, SET_KEY, STATUS};
 use serde_json::{Map, Value, json};
 
+/// The last AI prompt and its settings, offered again by the next Generate Image / Generative Fill.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct GenAiLast {
+    pub prompt: String,
+    pub model: String,
+    pub resolution: String,
+    pub use_canvas: bool,
+}
+
 const MARK: &str = "__genai";
 /// Width of the dialog's fields.
 const FIELD_W: f32 = 380.0;
@@ -114,7 +123,7 @@ pub fn confirm(app: &mut PhotocraftApp, fields: &Map<String, Value>) -> Result<V
     let model = fields.get("model").and_then(Value::as_str).unwrap_or("").trim().to_string();
     let resolution = fields.get("resolution").and_then(Value::as_str).unwrap_or("1K").to_string();
     let use_canvas = fields.get("useCanvas").and_then(Value::as_bool).unwrap_or(false);
-    app.ui.genai_last = crate::state::GenAiLast { prompt: prompt.clone(), model: model.clone(), resolution: resolution.clone(), use_canvas };
+    app.ui.genai_last = GenAiLast { prompt: prompt.clone(), model: model.clone(), resolution: resolution.clone(), use_canvas };
     let mut params = json!({"prompt": prompt, "model": model, "resolution": resolution});
     if command == GENERATE {
         params["useCanvas"] = json!(use_canvas);

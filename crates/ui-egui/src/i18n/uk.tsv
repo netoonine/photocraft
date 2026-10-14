@@ -3874,23 +3874,3 @@ curves	Smooth	Згладити
 # View › Guides › right-click a guide
 	Edit Selected Guides	Редагувати вибрані напрямні
 	Clear Selected Guides	Очистити вибрані напрямні
-# Generative AI through KIE (local addition)
-	Generative Fill…	Генеративна заливка…
-	Generate Image…	Створити зображення…
-	AI API Key…	Ключ API ШІ…
-	KIE API key	Ключ API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Ключ збережено. Введіть новий, щоб замінити його, або залиште поле порожнім, щоб видалити.
-	No key yet. Get one at kie.ai.	Ключа ще немає. Отримайте його на kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Задано змінну середовища KIE_API_KEY, вона має пріоритет.
-	No KIE API key yet: set it in Edit › AI API Key…	Ключ API KIE не задано: вкажіть його в меню Редагування › Ключ API ШІ…
-	Describe what to change in the selection	Опишіть, що змінити у виділенні
-	Describe the image to generate	Опишіть зображення, яке потрібно створити
-	Use the canvas as a reference	Використати полотно як зразок
-	Uses credits from your KIE AI account.	Витрачає кредити вашого облікового запису KIE AI.
-	Generate with AI	Створити за допомогою ШІ
-	With context	З контекстом
-	Selection only	Лише виділення
-	Describe what to generate	Опишіть, що створити
-	The AI sees the area around the selection, so the result blends into the image	ШІ бачить область навколо виділення, тому результат вписується в зображення
-	The AI paints from your prompt alone, shaped like the selection	ШІ малює лише за вашим запитом, у формі виділення
-	Contextual Task Bar	Контекстна панель завдань

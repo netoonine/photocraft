@@ -3875,23 +3875,3 @@ curves	Smooth	Εξομάλυνση
 # View › Guides › right-click a guide
 	Edit Selected Guides	Επεξεργασία επιλεγμένων οδηγών
 	Clear Selected Guides	Απαλοιφή επιλεγμένων οδηγών
-# Generative AI through KIE (local addition)
-	Generative Fill…	Παραγωγική γέμιση…
-	Generate Image…	Δημιουργία εικόνας…
-	AI API Key…	Κλειδί API τεχνητής νοημοσύνης…
-	KIE API key	Κλειδί API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Υπάρχει αποθηκευμένο κλειδί. Εισαγάγετε νέο για αντικατάσταση ή αφήστε το κενό για αφαίρεση.
-	No key yet. Get one at kie.ai.	Δεν υπάρχει ακόμη κλειδί. Αποκτήστε ένα στο kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Η μεταβλητή περιβάλλοντος KIE_API_KEY έχει οριστεί και έχει προτεραιότητα.
-	No KIE API key yet: set it in Edit › AI API Key…	Δεν υπάρχει ακόμη κλειδί API KIE: ορίστε το στο Επεξεργασία › Κλειδί API τεχνητής νοημοσύνης…
-	Describe what to change in the selection	Περιγράψτε τι θα αλλάξει στην επιλογή
-	Describe the image to generate	Περιγράψτε την εικόνα που θα δημιουργηθεί
-	Use the canvas as a reference	Χρήση του καμβά ως αναφοράς
-	Uses credits from your KIE AI account.	Χρησιμοποιεί μονάδες από τον λογαριασμό σας KIE AI.
-	Generate with AI	Δημιουργία με ΤΝ
-	With context	Με περιβάλλον
-	Selection only	Μόνο η επιλογή
-	Describe what to generate	Περιγράψτε τι θα δημιουργηθεί
-	The AI sees the area around the selection, so the result blends into the image	Η ΤΝ βλέπει την περιοχή γύρω από την επιλογή, ώστε το αποτέλεσμα να δένει με την εικόνα
-	The AI paints from your prompt alone, shaped like the selection	Η ΤΝ ζωγραφίζει μόνο από την περιγραφή σας, στο σχήμα της επιλογής
-	Contextual Task Bar	Γραμμή εργασιών βάσει περιβάλλοντος

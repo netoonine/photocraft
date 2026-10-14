@@ -3353,23 +3353,3 @@ curves	Smooth	매끄럽게
 # View › Guides › right-click a guide
 	Edit Selected Guides	선택한 안내선 편집
 	Clear Selected Guides	선택한 안내선 지우기
-# Generative AI through KIE (local addition)
-	Generative Fill…	생성형 채우기…
-	Generate Image…	이미지 생성…
-	AI API Key…	AI API 키…
-	KIE API key	KIE API 키
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	저장된 키가 있습니다. 바꾸려면 새 키를 입력하고, 삭제하려면 비워 두세요.
-	No key yet. Get one at kie.ai.	아직 키가 없습니다. kie.ai에서 받으세요.
-	The KIE_API_KEY environment variable is set and takes precedence.	환경 변수 KIE_API_KEY가 설정되어 있으며 우선 적용됩니다.
-	No KIE API key yet: set it in Edit › AI API Key…	아직 KIE API 키가 없습니다. 설정 위치: 편집 › AI API 키…
-	Describe what to change in the selection	선택 영역에서 바꿀 내용을 설명하세요
-	Describe the image to generate	생성할 이미지를 설명하세요
-	Use the canvas as a reference	캔버스를 참조 이미지로 사용
-	Uses credits from your KIE AI account.	KIE AI 계정의 크레딧을 사용합니다.
-	Generate with AI	AI로 생성
-	With context	컨텍스트 포함
-	Selection only	선택 영역만
-	Describe what to generate	생성할 내용을 설명하세요
-	The AI sees the area around the selection, so the result blends into the image	AI가 선택 영역 주변을 보기 때문에 결과가 이미지와 자연스럽게 어우러집니다
-	The AI paints from your prompt alone, shaped like the selection	AI가 프롬프트만으로 선택 영역 모양에 맞춰 그립니다
-	Contextual Task Bar	상황별 작업 표시줄

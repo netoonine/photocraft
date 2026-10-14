@@ -3661,23 +3661,3 @@ curves	Smooth	Làm mượt
 # View › Guides › right-click a guide
 	Edit Selected Guides	Sửa đường căn đã chọn
 	Clear Selected Guides	Xóa đường căn đã chọn
-# Generative AI through KIE (local addition)
-	Generative Fill…	Tô màu tạo sinh…
-	Generate Image…	Tạo hình ảnh…
-	AI API Key…	Khóa API AI…
-	KIE API key	Khóa API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Đã lưu một khóa. Nhập khóa mới để thay thế, hoặc để trống để xóa.
-	No key yet. Get one at kie.ai.	Chưa có khóa. Hãy lấy một khóa tại kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Biến môi trường KIE_API_KEY đã được đặt và được ưu tiên.
-	No KIE API key yet: set it in Edit › AI API Key…	Chưa có khóa API KIE: hãy đặt trong Chỉnh sửa › Khóa API AI…
-	Describe what to change in the selection	Mô tả điều cần thay đổi trong vùng chọn
-	Describe the image to generate	Mô tả hình ảnh cần tạo
-	Use the canvas as a reference	Dùng canvas làm hình tham chiếu
-	Uses credits from your KIE AI account.	Sử dụng tín dụng từ tài khoản KIE AI của bạn.
-	Generate with AI	Tạo bằng AI
-	With context	Có ngữ cảnh
-	Selection only	Chỉ vùng chọn
-	Describe what to generate	Mô tả nội dung cần tạo
-	The AI sees the area around the selection, so the result blends into the image	AI nhìn thấy vùng xung quanh vùng chọn nên kết quả hòa vào hình ảnh
-	The AI paints from your prompt alone, shaped like the selection	AI vẽ chỉ dựa trên câu lệnh của bạn, theo hình dạng vùng chọn
-	Contextual Task Bar	Thanh tác vụ theo ngữ cảnh

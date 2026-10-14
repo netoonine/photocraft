@@ -32,7 +32,7 @@ pub mod commands;
 pub mod comps_cmds;
 mod crop_fill;
 pub mod cutout_cmds;
-pub mod genai_cmds;
+pub mod genai_cmds; // MANUCRAFT: generative AI (KIE)
 pub mod display_color;
 pub mod distort_cmds;
 pub mod document_preset_cmds;

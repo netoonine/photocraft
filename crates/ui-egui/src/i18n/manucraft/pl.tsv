@@ -1,0 +1,21 @@
+# MANUCRAFT translations (pl), merged into ../pl.tsv when parsed (i18n/manucraft/mod.rs).
+# Same columns: context <TAB> English source <TAB> translation.
+	Generative Fill…	Wypełnienie generatywne…
+	Generate Image…	Generuj obraz…
+	AI API Key…	Klucz API AI…
+	KIE API key	Klucz API KIE
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Klucz jest zapisany. Wpisz nowy, aby go zastąpić, lub zostaw puste, aby go usunąć.
+	No key yet. Get one at kie.ai.	Brak klucza. Uzyskaj go na kie.ai.
+	The KIE_API_KEY environment variable is set and takes precedence.	Zmienna środowiskowa KIE_API_KEY jest ustawiona i ma pierwszeństwo.
+	No KIE API key yet: set it in Edit › AI API Key…	Brak klucza API KIE: ustaw go w menu Edycja › Klucz API AI…
+	Describe what to change in the selection	Opisz, co zmienić w zaznaczeniu
+	Describe the image to generate	Opisz obraz do wygenerowania
+	Use the canvas as a reference	Użyj obszaru roboczego jako odniesienia
+	Uses credits from your KIE AI account.	Zużywa środki z Twojego konta KIE AI.
+	Generate with AI	Generuj za pomocą AI
+	With context	Z kontekstem
+	Selection only	Tylko zaznaczenie
+	Describe what to generate	Opisz, co wygenerować
+	The AI sees the area around the selection, so the result blends into the image	AI widzi obszar wokół zaznaczenia, więc wynik wtapia się w obraz
+	The AI paints from your prompt alone, shaped like the selection	AI maluje tylko na podstawie promptu, w kształcie zaznaczenia
+	Contextual Task Bar	Kontekstowy pasek zadań

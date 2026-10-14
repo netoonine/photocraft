@@ -78,8 +78,8 @@ pub mod distort_ui;
 pub mod doc_props_ui;
 pub mod dock;
 pub mod duplicate_layer_ui;
-pub mod genai_ui;
-pub mod context_bar;
+pub mod genai_ui; // MANUCRAFT: AI dialogs
+pub mod context_bar; // MANUCRAFT: contextual task bar
 pub mod edit_history;
 pub mod egui_fonts;
 pub mod enable_rules;

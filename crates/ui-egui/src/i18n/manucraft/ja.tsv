@@ -1,0 +1,21 @@
+# MANUCRAFT translations (ja), merged into ../ja.tsv when parsed (i18n/manucraft/mod.rs).
+# Same columns: context <TAB> English source <TAB> translation.
+	Generative Fill…	生成塗りつぶし…
+	Generate Image…	画像を生成…
+	AI API Key…	AI API キー…
+	KIE API key	KIE API キー
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	キーが保存されています。置き換えるには新しいキーを入力し、削除するには空欄のままにします。
+	No key yet. Get one at kie.ai.	キーがまだありません。kie.ai で取得してください。
+	The KIE_API_KEY environment variable is set and takes precedence.	環境変数 KIE_API_KEY が設定されており、こちらが優先されます。
+	No KIE API key yet: set it in Edit › AI API Key…	KIE API キーがまだありません。設定場所：編集 › AI API キー…
+	Describe what to change in the selection	選択範囲で変更したい内容を入力
+	Describe the image to generate	生成する画像を説明してください
+	Use the canvas as a reference	カンバスを参照画像として使用
+	Uses credits from your KIE AI account.	KIE AI アカウントのクレジットを使用します。
+	Generate with AI	AI で生成
+	With context	コンテキストあり
+	Selection only	選択範囲のみ
+	Describe what to generate	生成する内容を入力
+	The AI sees the area around the selection, so the result blends into the image	AI が選択範囲の周囲を参照するため、結果が画像になじみます
+	The AI paints from your prompt alone, shaped like the selection	AI はプロンプトだけを元に、選択範囲の形で描きます
+	Contextual Task Bar	コンテキストタスクバー

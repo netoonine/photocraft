@@ -21,6 +21,7 @@
 //!   translators may reorder placeholders freely.
 
 mod catalog;
+mod manucraft; // MANUCRAFT: own translations
 mod system;
 
 pub use system::system_lang;
@@ -232,7 +233,7 @@ impl LangInfo {
     }
 
     fn catalog(&self) -> &Catalog {
-        self.catalog.get_or_init(|| Catalog::parse(&self.text()))
+        self.catalog.get_or_init(|| Catalog::parse(&(self.text() + "\n" + manucraft::extra(self.code)))) // MANUCRAFT
     }
 }
 

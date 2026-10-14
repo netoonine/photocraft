@@ -3783,23 +3783,3 @@ navigator	Zoom	Zvětšení
 # View › Guides › right-click a guide
 	Edit Selected Guides	Upravit vybraná vodítka
 	Clear Selected Guides	Vymazat vybraná vodítka
-# Generative AI through KIE (local addition)
-	Generative Fill…	Generativní výplň…
-	Generate Image…	Generovat obrázek…
-	AI API Key…	Klíč API pro AI…
-	KIE API key	Klíč API KIE
-	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Klíč je uložen. Zadejte nový, který jej nahradí, nebo pole nechte prázdné a klíč se odstraní.
-	No key yet. Get one at kie.ai.	Zatím žádný klíč. Získáte ho na kie.ai.
-	The KIE_API_KEY environment variable is set and takes precedence.	Proměnná prostředí KIE_API_KEY je nastavena a má přednost.
-	No KIE API key yet: set it in Edit › AI API Key…	Zatím žádný klíč API KIE: nastavte ho v nabídce Úpravy › Klíč API pro AI…
-	Describe what to change in the selection	Popište, co se má ve výběru změnit
-	Describe the image to generate	Popište obrázek, který chcete vygenerovat
-	Use the canvas as a reference	Použít plátno jako referenci
-	Uses credits from your KIE AI account.	Čerpá kredity z vašeho účtu KIE AI.
-	Generate with AI	Generovat pomocí AI
-	With context	S kontextem
-	Selection only	Jen výběr
-	Describe what to generate	Popište, co se má vygenerovat
-	The AI sees the area around the selection, so the result blends into the image	AI vidí oblast kolem výběru, takže výsledek splyne s obrázkem
-	The AI paints from your prompt alone, shaped like the selection	AI maluje jen podle vašeho zadání, ve tvaru výběru
-	Contextual Task Bar	Kontextový panel úloh
