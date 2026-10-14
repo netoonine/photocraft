@@ -2036,6 +2036,7 @@ fn documents(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
     }
     let view = app.ui.views[idx].clone();
     canvas_view(app, ui, idx, rect, view, true);
+    crate::context_bar::show(app, ui.ctx());
 }
 
 /// The tab strip; returns where its document tabs are.

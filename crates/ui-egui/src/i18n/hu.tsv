@@ -4090,3 +4090,23 @@ cameraRaw	Yellow	Sárga
 # View › Guides › right-click a guide
 	Edit Selected Guides	Kijelölt segédvonalak szerkesztése
 	Clear Selected Guides	Kijelölt segédvonalak törlése
+# Generative AI through KIE (local addition)
+	Generative Fill…	Generatív kitöltés…
+	Generate Image…	Kép generálása…
+	AI API Key…	MI API-kulcs…
+	KIE API key	KIE API-kulcs
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Van mentett kulcs. Írjon be újat a cseréjéhez, vagy hagyja üresen a törléséhez.
+	No key yet. Get one at kie.ai.	Még nincs kulcs. Igényeljen egyet a kie.ai oldalon.
+	The KIE_API_KEY environment variable is set and takes precedence.	A KIE_API_KEY környezeti változó be van állítva, és elsőbbséget élvez.
+	No KIE API key yet: set it in Edit › AI API Key…	Még nincs KIE API-kulcs: állítsa be itt: Szerkesztés › MI API-kulcs…
+	Describe what to change in the selection	Írja le, mit változtasson a kijelölésben
+	Describe the image to generate	Írja le a generálandó képet
+	Use the canvas as a reference	A vászon használata referenciaként
+	Uses credits from your KIE AI account.	A KIE AI-fiókja kreditjeit használja.
+	Generate with AI	Generálás MI-vel
+	With context	Környezettel
+	Selection only	Csak a kijelölés
+	Describe what to generate	Írja le, mit generáljon
+	The AI sees the area around the selection, so the result blends into the image	Az MI látja a kijelölés környezetét, így az eredmény beleolvad a képbe
+	The AI paints from your prompt alone, shaped like the selection	Az MI csak a promptja alapján fest, a kijelölés alakjában
+	Contextual Task Bar	Környezetfüggő feladatsáv

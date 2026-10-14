@@ -3931,3 +3931,23 @@ curves	Smooth	Vloeiend maken
 # View › Guides › right-click a guide
 	Edit Selected Guides	Geselecteerde hulplijnen bewerken
 	Clear Selected Guides	Geselecteerde hulplijnen wissen
+# Generative AI through KIE (local addition)
+	Generative Fill…	Generatieve opvulling…
+	Generate Image…	Afbeelding genereren…
+	AI API Key…	AI-API-sleutel…
+	KIE API key	KIE-API-sleutel
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	Er is een sleutel opgeslagen. Voer een nieuwe in om die te vervangen, of laat leeg om hem te verwijderen.
+	No key yet. Get one at kie.ai.	Nog geen sleutel. Haal er een op kie.ai.
+	The KIE_API_KEY environment variable is set and takes precedence.	De omgevingsvariabele KIE_API_KEY is ingesteld en heeft voorrang.
+	No KIE API key yet: set it in Edit › AI API Key…	Nog geen KIE-API-sleutel: stel die in via Bewerken › AI-API-sleutel…
+	Describe what to change in the selection	Beschrijf wat er in de selectie moet veranderen
+	Describe the image to generate	Beschrijf de afbeelding die je wilt genereren
+	Use the canvas as a reference	Canvas als referentie gebruiken
+	Uses credits from your KIE AI account.	Gebruikt tegoed van je KIE AI-account.
+	Generate with AI	Genereren met AI
+	With context	Met context
+	Selection only	Alleen selectie
+	Describe what to generate	Beschrijf wat er gegenereerd moet worden
+	The AI sees the area around the selection, so the result blends into the image	De AI ziet het gebied rond de selectie, zodat het resultaat opgaat in de afbeelding
+	The AI paints from your prompt alone, shaped like the selection	De AI schildert alleen op basis van je prompt, in de vorm van de selectie
+	Contextual Task Bar	Contextuele taakbalk

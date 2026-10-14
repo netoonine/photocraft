@@ -416,6 +416,9 @@ pub struct Panels {
     /// floating window rather than a modal so the canvas stays usable while a gradient is edited.
     #[serde(default)]
     pub gradient_editor: bool,
+    /// Window › Contextual Task Bar: the floating bar under a selection (Generate with AI).
+    #[serde(default = "yes")]
+    pub context_bar: bool,
 }
 
 impl Default for Panels {
@@ -438,6 +441,7 @@ impl Default for Panels {
             rail: true,
             menu_bar: true,
             gradient_editor: false,
+            context_bar: true,
         }
     }
 }
@@ -1056,6 +1060,28 @@ pub struct ColorPanelState {
     pub background: bool,
 }
 
+/// The last AI prompt and its settings, offered again by the next Generate Image / Generative Fill.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct GenAiLast {
+    pub prompt: String,
+    pub model: String,
+    pub resolution: String,
+    pub use_canvas: bool,
+}
+
+/// The contextual task bar's state: open or not, its prompt and mode, and the selection it was
+/// closed for (it comes back when the selection changes).
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct ContextBarUi {
+    pub expanded: bool,
+    pub prompt: String,
+    /// Selection only (the prompt alone) rather than With context.
+    pub area_only: bool,
+    /// Focus the prompt on the next frame (just expanded).
+    pub focus: bool,
+    pub dismissed: Option<crate::context_bar::SelectionKey>,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UiState {
     pub tool: Tool,
@@ -1272,6 +1298,12 @@ pub struct UiState {
     pub next_id: u64,
     /// Last status message (errors from commands, hints).
     pub status: String,
+    /// The last Generate Image / Generative Fill prompt and settings (this session only).
+    #[serde(skip)]
+    pub genai_last: GenAiLast,
+    /// The contextual task bar under the selection (this session only).
+    #[serde(skip)]
+    pub context_bar: ContextBarUi,
     /// The status message is an error (shown in the warning colour).
     #[serde(default)]
     pub status_error: bool,
@@ -1375,6 +1407,8 @@ impl Default for UiState {
             perspective_crop: None,
             next_id: 1,
             status: String::new(),
+            genai_last: GenAiLast::default(),
+            context_bar: ContextBarUi::default(),
             status_error: false,
             notices: Vec::new(),
             gpu_fallback_notice: None,

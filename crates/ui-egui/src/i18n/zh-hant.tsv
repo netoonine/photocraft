@@ -2770,3 +2770,23 @@ curves	Smooth	平滑
 # View › Guides › right-click a guide
 	Edit Selected Guides	編輯所選參考線
 	Clear Selected Guides	清除所選參考線
+# Generative AI through KIE (local addition)
+	Generative Fill…	生成填色…
+	Generate Image…	生成影像…
+	AI API Key…	AI API 金鑰…
+	KIE API key	KIE API 金鑰
+	A key is saved. Enter a new one to replace it, or leave empty to remove it.	已儲存金鑰。輸入新金鑰可取代，留空則移除。
+	No key yet. Get one at kie.ai.	尚無金鑰。請至 kie.ai 取得。
+	The KIE_API_KEY environment variable is set and takes precedence.	已設定環境變數 KIE_API_KEY，且優先使用。
+	No KIE API key yet: set it in Edit › AI API Key…	尚無 KIE API 金鑰。設定位置：編輯 › AI API 金鑰…
+	Describe what to change in the selection	描述要在選取範圍中變更的內容
+	Describe the image to generate	描述要生成的影像
+	Use the canvas as a reference	使用版面作為參考
+	Uses credits from your KIE AI account.	將使用您 KIE AI 帳戶中的點數。
+	Generate with AI	使用 AI 生成
+	With context	包含內容脈絡
+	Selection only	僅選取範圍
+	Describe what to generate	描述要生成的內容
+	The AI sees the area around the selection, so the result blends into the image	AI 會參考選取範圍周圍的區域，讓結果與影像融為一體
+	The AI paints from your prompt alone, shaped like the selection	AI 只根據您的提示，以選取範圍的形狀繪製
+	Contextual Task Bar	內容相關工作列
