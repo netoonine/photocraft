@@ -51,7 +51,8 @@ Window › Contextual Task Bar toggles it.
 | `crates/ui-egui/src/lib.rs` | `pub mod context_bar;` |
 | `crates/ui-egui/src/canvas.rs` | `crate::context_bar::show(app, ui.ctx());` at the end of `document_area` (single view); the bar is docked at the canvas bottom centre so right-clicks near the selection still open canvas menus |
 | `crates/ui-egui/src/state.rs` | `Panels.context_bar` (serde default yes) + `UiState.context_bar` (+ `Default`s) |
-| `crates/ui-egui/src/menus.rs` | `UI_COMMANDS` row `window.toggle.contextBar`; toggle arm; checkmark arm |
+| `crates/engine/src/shell_commands.rs` | `SHELL_COMMANDS` row `window.toggle.contextBar` (upstream moved `UI_COMMANDS` here in 2026-10) |
+| `crates/ui-egui/src/menus.rs` | toggle arm; checkmark arm |
 
 **Test:** `cargo test -p photocraft-ui-egui --lib context_bar`; visual: `cargo run -p photocraft-ui-egui --example snapshot`
 with `select.rect`, then look at the bottom centre of the canvas.
