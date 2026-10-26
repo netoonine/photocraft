@@ -34,7 +34,8 @@ Imagen 4 Ultra; `nano-banana-2` by default). Reference images are scaled to 2048
 | `crates/ui-egui/src/i18n/mod.rs` | `mod manucraft;` + `LangInfo::catalog` parses `text() + manucraft::extra(code)` |
 | `Cargo.lock` | regenerate (`cargo update -p craft-ai` or any build) — never hand-merge |
 
-**Test:** `cargo test -p photocraft-engine --lib genai`, `cargo test -p photocraft-ui-egui --lib genai i18n`;
+**Test:** `cargo test -p photocraft-engine --lib genai`, `CRAFT_FONTS_DIR=../craft-fonts cargo test -p photocraft-ui-egui --lib -- genai i18n context_bar`
+(without the fonts folder the i18n live tests fail on missing CJK glyphs);
 live: `photocraft-cli run --new '{"width":800,"height":450}' --cmd edit.generateImage --params '{"prompt":"a lighthouse"}' --out /tmp/g.png`.
 
 ## 2. Contextual task bar

@@ -47,7 +47,7 @@ pub fn fit_model(options: &[(String, String)], current: &str) -> String {
 /// A model dropdown; returns whether the choice changed.
 pub fn model_dropdown(ui: &mut egui::Ui, id: &str, current: &mut String, options: &[(String, String)], width: f32) -> bool {
     let opts: Vec<(String, &str)> = options.iter().map(|(k, l)| (k.clone(), l.as_str())).collect();
-    crate::widgets::dropdown(ui, id, current, &opts, width)
+    crate::widgets::dropdown(ui, id, tl!("Model"), current, &opts, width)
 }
 
 const MARK: &str = "__genai";
@@ -148,7 +148,7 @@ pub fn body(ui: &mut egui::Ui, fields: &mut Map<String, Value>) {
         model_dropdown(ui, "genai-model", &mut model, &model_opts, 200.0);
         ui.end_row();
         ui.label(tl!("Resolution"));
-        crate::widgets::dropdown(ui, "genai-resolution", &mut resolution, &options, 200.0);
+        crate::widgets::dropdown(ui, "genai-resolution", tl!("Resolution"), &mut resolution, &options, 200.0);
         ui.end_row();
     });
     fields.insert("model".into(), json!(model));

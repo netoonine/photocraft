@@ -89,7 +89,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &Context) {
     let Some((key, _)) = target(app) else { return };
     let Some(xf) = ViewXform::active(app) else { return };
     let view = xf.rect;
-    let id = egui::Id::new("photocraft-context-bar");
+    let id = egui::Id::unique("photocraft-context-bar");
     let size = ctx.memory(|m| m.area_rect(id)).map_or(vec2(260.0, 36.0), |r| r.size());
     // Docked at the bottom centre of the canvas (Photoshop's pinned position), not next to the
     // selection: right-clicks around the selection must keep reaching the canvas menus.
